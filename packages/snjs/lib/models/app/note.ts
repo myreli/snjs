@@ -1,3 +1,4 @@
+import { ContentType } from '@Models/content_types';
 import { PayloadFormat } from './../../protocol/payloads/formats';
 import { isNullOrUndefined } from '@Lib/utils';
 import { AppDataField, ItemMutator, SNItem } from '@Models/core/item';
@@ -11,6 +12,9 @@ export interface NoteContent {
   preview_plain?: string;
   preview_html?: string;
 }
+
+export const isNote = (x: SNItem): x is SNNote =>
+  x.content_type === ContentType.Note;
 
 /** A note item */
 export class SNNote extends SNItem implements NoteContent {
