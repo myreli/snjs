@@ -262,11 +262,15 @@ export class ItemManager extends PureService {
     ) as SNComponent[];
   }
 
-  public addNoteCountChangeObserver(
-    observer: TagNoteCountChangeObserver
-  ): () => void {
-    return this.tagNotesIndex.addCountChangeObserver(observer);
-  }
+
+  // Protect the public API from our implementation details,
+  // Reduce the API surface (don't add a new type of observer)
+  // "as a user of SNJS I expect a reliable state when I observe tags & other content updates".
+  // public addNoteCountChangeObserver(
+  //   observer: TagNoteCountChangeObserver
+  // ): () => void {
+  //   return this.tagNotesIndex.addCountChangeObserver(observer);
+  // }
 
 
   // make the typing "honnest" and ready to split the two classes (see below)
