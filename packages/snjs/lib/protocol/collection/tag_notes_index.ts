@@ -64,7 +64,7 @@ export class TagNotesIndex {
 
   private receiveTagChanges(tags: SNTag[]): void {
     for (const tag of tags) {
-      const uuids = tag.noteReferences.map((ref) => ref.uuid);
+      const uuids = tag.noteReferences_.map((ref) => ref.uuid);
       const countableUuids = uuids.filter((uuid) =>
         this.allCountableNotes.has(uuid)
       );

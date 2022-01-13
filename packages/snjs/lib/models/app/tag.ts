@@ -32,10 +32,11 @@ export class SNTag extends SNItem implements TagContent {
   //
   // The direction we're pushing right now is more "every piece of data needs a global field"
   //
-  // get noteReferences(): ContentReference[] {
-  //   const references = this.payload.safeReferences;
-  //   return references.filter((ref) => ref.content_type === ContentType.Note);
-  // }
+  // Adding back as a private API
+  get noteReferences_(): ContentReference[] {
+    const references = this.payload.safeReferences;
+    return references.filter((ref) => ref.content_type === ContentType.Note);
+  }
 
   // get noteCount(): number {
   //   return this.noteReferences.length;
