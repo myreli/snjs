@@ -71,9 +71,9 @@ export class TagNotesIndex {
       const previousSet = this.tagToNotesMap[tag.uuid];
       this.tagToNotesMap[tag.uuid] = new Set(countableUuids);
 
-      if (previousSet?.size !== countableUuids.length) {
-        this.notifyObservers(tag.uuid);
-      }
+      // if (previousSet?.size !== countableUuids.length) {
+      //   this.notifyObservers(tag.uuid);
+      // }
     }
   }
 
