@@ -22,21 +22,28 @@ export class TagNotesIndex {
     return !note.archived && !note.trashed;
   };
 
-  public addCountChangeObserver(
-    observer: TagNoteCountChangeObserver
-  ): () => void {
-    this.observers.push(observer);
+  // We already have multiple observers and subscription workflow internally,
+  // I wouldn't implement a new one immediately and first try to reuse and
+  // repurpose what we already have.
+  // Take this as an enterprise service bus for the API internals.
+  // Commented because I operate under the assumption we already have a public API
+  // to express "I want to subscribe to a tag(s) and get notified any time they change."
+  //
+  // public addCountChangeObserver(
+  //   observer: TagNoteCountChangeObserver
+  // ): () => void {
+  //   this.observers.push(observer);
 
-    return () => {
-      removeFromArray(this.observers, observer);
-    };
-  }
+  //   return () => {
+  //     removeFromArray(this.observers, observer);
+  //   };
+  // }
 
-  private notifyObservers(tagUuid: UuidString | undefined) {
-    for (const observer of this.observers) {
-      observer(tagUuid);
-    }
-  }
+  // private notifyObservers(tagUuid: UuidString | undefined) {
+  //   for (const observer of this.observers) {
+  //     observer(tagUuid);
+  //   }
+  // }
 
   public allCountableNotesCount(): number {
     return this.allCountableNotes.size;

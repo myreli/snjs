@@ -24,14 +24,22 @@ export class SNTag extends SNItem implements TagContent {
     this.title = this.payload.safeContent.title || '';
   }
 
-  get noteReferences(): ContentReference[] {
-    const references = this.payload.safeReferences;
-    return references.filter((ref) => ref.content_type === ContentType.Note);
-  }
+  // Remove this because it's generally broken.
+  // I am "unhappy" about this because I believe that makes for a more comprehensive API
+  // (subscribe to object and read their fields, push global comments, see CQRS).
+  // For example, counts are application.getCount level operation, but title is local.
+  // What about parents, and others?
+  //
+  // The direction we're pushing right now is more "every piece of data needs a global field"
+  //
+  // get noteReferences(): ContentReference[] {
+  //   const references = this.payload.safeReferences;
+  //   return references.filter((ref) => ref.content_type === ContentType.Note);
+  // }
 
-  get noteCount(): number {
-    return this.noteReferences.length;
-  }
+  // get noteCount(): number {
+  //   return this.noteReferences.length;
+  // }
 
   public get isSmartTag(): boolean {
     return false;
