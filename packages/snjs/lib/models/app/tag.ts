@@ -34,23 +34,23 @@ export class SNTag extends SNItem implements TagContent {
   }
 
   public get isSmartTag(): boolean {
-    return this.content_type === ContentType.SmartTag;
+    return false;
   }
 
   public get isSystemSmartTag(): boolean {
-    return this.payload.safeContent.isSystemTag;
+    return false;
   }
 
   public get isAllTag(): boolean {
-    return this.payload.safeContent.isAllTag;
+    return false;
   }
 
   public get isTrashTag(): boolean {
-    return this.payload.safeContent.isTrashTag;
+    return false;
   }
 
   public get isArchiveTag(): boolean {
-    return this.payload.safeContent.isArchiveTag;
+    return false;
   }
 
   public get parentId(): UuidString | undefined {
