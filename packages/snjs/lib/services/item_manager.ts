@@ -356,11 +356,8 @@ export class ItemManager extends PureService {
     // start pushing API towards each other.
     this.collection.onChange(delta);
     this.notesView.onChange(delta);
+    this.tagNotesIndex.onChange(delta);
 
-    this.notesView.setNeedsRebuilding();
-    this.tagNotesIndex.receiveTagAndNoteChanges(
-      changedOrInserted.filter(isTagOrNote)
-    );
     this.notifyObservers(
       delta.changed,
       delta.inserted,
