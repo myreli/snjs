@@ -17,6 +17,7 @@ import { CreateMaxPayloadFromAnyObject } from '@Payloads/generator';
 import {
   CollectionSort,
   ItemCollection,
+  ItemDelta,
   SortDirection,
 } from '@Protocol/collection/item_collection';
 import { ContentType } from '../models/content_types';
@@ -343,26 +344,28 @@ export class ItemManager extends PureService {
     source: PayloadSource,
     sourceKey?: string
   ) {
-    const changedItems = changed.map((p) => CreateItemFromPayload(p));
-    const insertedItems = inserted.map((p) => CreateItemFromPayload(p));
-    const ignoredItems = ignored.map((p) => CreateItemFromPayload(p));
-    const changedOrInserted = changedItems.concat(insertedItems);
-    if (changedOrInserted.length > 0) {
-      this.collection.set(changedOrInserted);
+    const createItems = (items: PurePayload[]) => items.map(item => CreateItemFromPayload(item))
+
+    const delta: ItemDelta = {
+      changed: createItems(changed),
+      inserted: createItems(inserted),
+      discarded: createItems(discarded),
+      ignored: createItems(ignored),
     }
-    const discardedItems = discarded.map((p) => CreateItemFromPayload(p));
-    for (const item of discardedItems) {
-      this.collection.discard(item);
-    }
+
+    // We basically have 3 views and 3 different way of computing them and 3 different APIs,
+    // start pushing API towards each other.
+    this.collection.onChange(delta);
+
     this.notesView.setNeedsRebuilding();
     this.tagNotesIndex.receiveTagAndNoteChanges(
       changedOrInserted.filter(isTagOrNote)
     );
     this.notifyObservers(
-      changedItems,
-      insertedItems,
-      discardedItems,
-      ignoredItems,
+      delta.changed,
+      delta.inserted,
+      delta.discarded,
+      delta.ignored,
       source,
       sourceKey
     );

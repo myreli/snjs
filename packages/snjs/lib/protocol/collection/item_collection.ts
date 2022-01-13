@@ -11,6 +11,13 @@ export enum CollectionSort {
 }
 export type SortDirection = 'asc' | 'dsc';
 
+export interface ItemDelta {
+  changed: SNItem[];
+  inserted: SNItem[];
+  discarded: SNItem[];
+  ignored: SNItem[];
+}
+
 /** The item collection class builds on mutable collection by providing an option to keep
  * items sorted and filtered. */
 export class ItemCollection extends MutableCollection<SNItem> {
@@ -262,5 +269,11 @@ export class ItemCollection extends MutableCollection<SNItem> {
       currentIndex++;
     }
     this.sortedMap[contentType] = cleaned;
+  }
+
+  public onChange(delta: ItemDelta): void {
+    delta.changed.forEach(item => this.set(item));
+    delta.inserted.forEach(item => this.set(item));
+    delta.discarded.forEach(item => this.discard(item));
   }
 }
