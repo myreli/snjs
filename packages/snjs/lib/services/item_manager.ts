@@ -272,12 +272,17 @@ export class ItemManager extends PureService {
     return this.tagNotesIndex.allCountableNotesCount();
   }
 
-  public countableNotesForTag(tag: SNTag): number {
+  // make the typing "honnest" and ready to split the two classes (see below)
+  public countableNotesForTag(tag: SNTag | SNSmartTag): number {
+    // That breaks the liskov substitution principle,
+    // https://stackify.com/solid-design-liskov-substitution-principle/
+    // If a smart tag is NOT a tag, then we need to prepare the code to split the two classes.
     if (tag.isSmartTag) {
       throw Error(
         'countableNotesForTag is not meant to be used for smart tags.'
       );
     }
+
     return this.tagNotesIndex.countableNotesForTag(tag);
   }
 
