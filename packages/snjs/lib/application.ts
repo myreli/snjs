@@ -858,17 +858,17 @@ export class SNApplication {
     return this.itemManager.notesMatchingSmartTag(smartTag);
   }
 
-  public addNoteCountChangeObserver(
-    observer: TagNoteCountChangeObserver
-  ): () => void {
-    return this.itemManager.addNoteCountChangeObserver(observer);
-  }
+  // public addNoteCountChangeObserver(
+  //   observer: TagNoteCountChangeObserver
+  // ): () => void {
+  //   return this.itemManager.addNoteCountChangeObserver(observer);
+  // }
 
-  public allCountableNotesCount(): number {
-    return this.itemManager.allCountableNotesCount();
-  }
+  // public allCountableNotesCount(): number {
+  //   return this.itemManager.allCountableNotesCount();
+  // }
 
-  public countableNotesForTag(tag: SNTag): number {
+  public countableNotesForTag(tag: SNTag | SNSmartTag): number {
     return this.itemManager.countableNotesForTag(tag);
   }
 
