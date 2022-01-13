@@ -193,6 +193,7 @@ export class ItemManager extends PureService {
       (tag) => tag.uuid === uuid
     );
 
+
     if (itemFromSmartTags) {
       return (itemFromSmartTags as unknown) as T;
     }

@@ -86,9 +86,10 @@ export class TagNotesIndex {
       } else {
         this.allCountableNotes.delete(note.uuid);
       }
-      if (previousAllCount !== this.allCountableNotes.size) {
-        this.notifyObservers(undefined);
-      }
+
+      // if (previousAllCount !== this.allCountableNotes.size) {
+      //   this.notifyObservers(undefined);
+      // }
 
       const associatedTagUuids = this.collection.uuidsThatReferenceUuid(
         note.uuid
@@ -101,9 +102,9 @@ export class TagNotesIndex {
         } else {
           set.delete(note.uuid);
         }
-        if (previousCount !== set.size) {
-          this.notifyObservers(tagUuid);
-        }
+        // if (previousCount !== set.size) {
+        //   this.notifyObservers(tagUuid);
+        // }
       }
     }
   }
