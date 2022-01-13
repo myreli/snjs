@@ -14,7 +14,7 @@ export type TagNoteCountChangeObserver = (
 export class TagNotesIndex {
   private tagToNotesMap: Partial<Record<UuidString, Set<UuidString>>> = {};
   private allCountableNotes = new Set<UuidString>();
-  private observers: TagNoteCountChangeObserver[] = [];
+  // private observers: TagNoteCountChangeObserver[] = [];
 
   constructor(private collection: ItemCollection) {}
 
