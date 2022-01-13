@@ -194,7 +194,6 @@ export class ItemManager extends PureService {
       (tag) => tag.uuid === uuid
     );
 
-
     if (itemFromSmartTags) {
       return (itemFromSmartTags as unknown) as T;
     }
@@ -263,7 +262,6 @@ export class ItemManager extends PureService {
       ContentType.Component
     ) as SNComponent[];
   }
-
 
   // Protect the public API from our implementation details,
   // Reduce the API surface (don't add a new type of observer)
@@ -344,18 +342,20 @@ export class ItemManager extends PureService {
     source: PayloadSource,
     sourceKey?: string
   ) {
-    const createItems = (items: PurePayload[]) => items.map(item => CreateItemFromPayload(item))
+    const createItems = (items: PurePayload[]) =>
+      items.map((item) => CreateItemFromPayload(item));
 
     const delta: ItemDelta = {
       changed: createItems(changed),
       inserted: createItems(inserted),
       discarded: createItems(discarded),
       ignored: createItems(ignored),
-    }
+    };
 
     // We basically have 3 views and 3 different way of computing them and 3 different APIs,
     // start pushing API towards each other.
     this.collection.onChange(delta);
+    this.notesView.onChange(delta);
 
     this.notesView.setNeedsRebuilding();
     this.tagNotesIndex.receiveTagAndNoteChanges(
