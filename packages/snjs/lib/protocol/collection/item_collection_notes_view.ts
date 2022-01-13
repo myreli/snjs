@@ -1,11 +1,12 @@
 import { SNSmartTag } from './../../models/app/smartTag';
-import { ItemCollection, ItemDelta, SNIndex } from './item_collection';
+import { ItemCollection } from './item_collection';
 import { ContentType, SNNote, SNTag } from '../../models';
 import {
   criteriaForSmartTag,
   NotesDisplayCriteria,
   notesMatchingCriteria,
 } from './notes_display_criteria';
+import { SNIndex, ItemDelta } from '@Lib/models/core/indexing';
 
 /**
  * A view into ItemCollection that allows filtering by tag and smart tag.
