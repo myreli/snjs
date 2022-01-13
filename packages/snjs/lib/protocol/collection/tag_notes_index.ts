@@ -18,6 +18,7 @@ export class TagNotesIndex {
 
   constructor(private collection: ItemCollection) {}
 
+  // Why here? Why not have this live in the note object? (separation of concerns)
   private isNoteCountable = (note: SNNote) => {
     return !note.archived && !note.trashed;
   };
