@@ -268,9 +268,6 @@ export class ItemManager extends PureService {
     return this.tagNotesIndex.addCountChangeObserver(observer);
   }
 
-  public allCountableNotesCount(): number {
-    return this.tagNotesIndex.allCountableNotesCount();
-  }
 
   // make the typing "honnest" and ready to split the two classes (see below)
   public countableNotesForTag(tag: SNTag | SNSmartTag): number {
@@ -278,8 +275,15 @@ export class ItemManager extends PureService {
     // https://stackify.com/solid-design-liskov-substitution-principle/
     // If a smart tag is NOT a tag, then we need to prepare the code to split the two classes.
     if (tag.isSmartTag) {
+
+      // Protect the public API from our implementation details (we don't count smart tags)
+      // Also prepare for next steps of the design where we counts some smart tags (all tags, files, untagged).
+      if (tag.isAllTag) {
+        return this.tagNotesIndex.allCountableNotesCount();
+      }
+
       throw Error(
-        'countableNotesForTag is not meant to be used for smart tags.'
+        'not supported for this type tag.'
       );
     }
 
