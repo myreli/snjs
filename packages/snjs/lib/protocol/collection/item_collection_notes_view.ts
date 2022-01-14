@@ -1,16 +1,17 @@
-import { SNSmartTag } from './../../models/app/smartTag';
-import { ItemCollection } from './item_collection';
 import { ContentType, SNNote, SNTag } from '../../models';
+import { SNSmartTag } from './../../models/app/smartTag';
+import { ItemDelta, SNIndex } from './indexes';
+import { ItemCollection } from './item_collection';
 import {
   criteriaForSmartTag,
   NotesDisplayCriteria,
-  notesMatchingCriteria,
+  notesMatchingCriteria
 } from './notes_display_criteria';
 
 /**
  * A view into ItemCollection that allows filtering by tag and smart tag.
  */
-export class ItemCollectionNotesView {
+export class ItemCollectionNotesView implements SNIndex {
   private displayedNotes: SNNote[] = [];
   private needsRebuilding = true;
 
@@ -34,7 +35,22 @@ export class ItemCollectionNotesView {
     return notesMatchingCriteria(criteria, this.collection);
   }
 
+  public displayElements(): SNNote[] {
+    if (this.needsRebuilding) {
+      this.rebuildList();
+    }
+    return this.displayedNotes.slice();
+  }
+
   private rebuildList(): void {
+    this.displayedNotes = notesMatchingCriteria(
+      this.currentCriteria,
+      this.collection
+    );
+    this.needsRebuilding = false;
+  }
+
+  private get currentCriteria(): NotesDisplayCriteria {
     const mostRecentVersionOfTags = this.criteria.tags
       .map((tag) => {
         if (tag.isSystemSmartTag) {
@@ -44,21 +60,15 @@ export class ItemCollectionNotesView {
         }
       })
       .filter((tag) => tag != undefined);
+
     const criteria = NotesDisplayCriteria.Copy(this.criteria, {
       tags: mostRecentVersionOfTags,
     });
-    this.displayedNotes = notesMatchingCriteria(criteria, this.collection);
+    
+    return criteria;
   }
 
-  setNeedsRebuilding() {
+  public onChange(_delta: ItemDelta): void {
     this.needsRebuilding = true;
-  }
-
-  displayElements() {
-    if (this.needsRebuilding) {
-      this.rebuildList();
-      this.needsRebuilding = false;
-    }
-    return this.displayedNotes.slice();
   }
 }
