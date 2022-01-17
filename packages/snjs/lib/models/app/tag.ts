@@ -1,7 +1,12 @@
-import { ContentReference } from '@Lib/protocol/payloads/generator';
-import { ContentType } from '@standardnotes/common';
+import {
+  ContenteReferenceType,
+  ContentReference,
+  isTagToParentTagReference,
+  TagToParentTagReference,
+} from '@Lib/protocol/payloads/generator';
 import { ItemMutator, SNItem } from '@Models/core/item';
 import { PurePayload } from '@Protocol/payloads/pure_payload';
+import { ContentType } from '@standardnotes/common';
 import { UuidString } from './../../types';
 import { ItemContent } from './../core/item';
 
@@ -23,7 +28,7 @@ export class SNTag extends SNItem implements TagContent {
 
   get noteReferences(): ContentReference[] {
     const references = this.payload.safeReferences;
-    return references.filter(ref => ref.content_type === ContentType.Note)
+    return references.filter((ref) => ref.content_type === ContentType.Note);
   }
 
   get noteCount(): number {
@@ -51,9 +56,7 @@ export class SNTag extends SNItem implements TagContent {
   }
 
   public get parentId(): UuidString | undefined {
-    const reference = this.references.find(
-      (ref) => ref.content_type === ContentType.Tag
-    );
+    const reference = this.references.find(isTagToParentTagReference);
     return reference?.uuid;
   }
 
@@ -79,13 +82,21 @@ export class TagMutator extends ItemMutator {
   }
 
   public makeChildOf(tag: SNTag): void {
-    const references = this.item.references.filter(
-      (ref) => ref.content_type !== ContentType.Tag
-    );
-    references.push({
+    const references = this.item.references.filter(isTagToParentTagReference);
+
+    const reference: TagToParentTagReference = {
+      reference_type: ContenteReferenceType.tagToParentTag,
       content_type: ContentType.Tag,
       uuid: tag.uuid,
-    });
+    };
+
+    references.push(reference);
+
+    this.typedContent.references = references;
+  }
+
+  public unsetParent(): void {
+    const references = this.item.references.filter(ref => !isTagToParentTagReference(ref));
     this.typedContent.references = references;
   }
 }

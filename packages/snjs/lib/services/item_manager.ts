@@ -15,7 +15,7 @@ import {
   ItemCollection,
   SortDirection,
 } from '@Protocol/collection/item_collection';
-import { ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common';
 import { ComponentMutator } from './../models/app/component';
 import {
   ActionsExtensionMutator,
@@ -898,7 +898,8 @@ export class ItemManager extends PureService {
 
   getTagChildren(tagUuid: UuidString): SNTag[] {
     const tag = this.findItem(tagUuid) as SNTag;
-    return this.collection.elementsReferencingElement(tag) as SNTag[];
+    const tags = this.collection.elementsReferencingElement(tag) as SNTag[];
+    return tags.filter((tag) => tag.parentId === tag.uuid);
   }
 
   public isTagAncestor(tagUuid: UuidString, childUuid: UuidString): boolean {
@@ -960,7 +961,7 @@ export class ItemManager extends PureService {
     }
 
     return this.changeTag(childTag.uuid, (m) => {
-      m.removeItemAsRelationship(parentTag);
+      m.unsetParent();
     });
   }
 
