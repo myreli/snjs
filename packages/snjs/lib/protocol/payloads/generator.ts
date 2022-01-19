@@ -7,30 +7,158 @@ import { ContentType } from '@standardnotes/common';
 import { EncryptionIntent } from '@Protocol/intents';
 import { Copy, pickByCopy, uniqueArray } from '@Lib/utils';
 import { PayloadField } from '@Payloads/fields';
+import { SNItem } from '@Lib/models';
+/**
+ * Type Hierarchy
+ *
+ *            LegacyAnonymousReference                                   AnonymousReference
+ *                /                                        /        /             \          \            \
+ *      (LegacyTagToNoteReference)            TagToParentTag    TagToNote    TagToNote    TagToFile   NoteToNote
+ *       /special case of reference/
+ *
+ */
 
-export interface LegacyTagToNoteReference {
+export interface LegacyAnonymousReference {
   uuid: string;
   content_type: string;
+}
+
+export interface LegacyTagToNoteReference extends LegacyAnonymousReference {
+  content_type: ContentType.Note;
 }
 
 export enum ContenteReferenceType {
   TagToParentTag = 'TagToParentTag',
+  TagToNote = 'TagToNote',
+  TagToFile = 'TagToFile',
+  NoteToNote = 'NoteToNote',
+  FileToFile = 'FileToFile',
 }
 
-export interface TagToParentTagReference {
-  reference_type: ContenteReferenceType.TagToParentTag;
+export interface AnonymousReference {
   uuid: string;
-  content_type: string;
+  content_type: ContentType;
+  reference_type: ContenteReferenceType;
 }
 
-export type ContentReference =
-  | LegacyTagToNoteReference
-  | TagToParentTagReference;
+export interface TagToParentTagReference extends AnonymousReference {
+  content_type: ContentType.Tag;
+  reference_type: ContenteReferenceType.TagToParentTag;
+}
 
-export const isTagToParentTagReference = (
+export interface TagToNoteReference extends AnonymousReference {
+  content_type: ContentType.Note;
+  reference_type: ContenteReferenceType.TagToNote;
+}
+
+export interface TagToFileReference extends AnonymousReference {
+  content_type: ContentType.File;
+  reference_type: ContenteReferenceType.TagToFile;
+  someOtherInfo: string; // Note the additional type here
+}
+
+export interface NoteToNoteReference extends AnonymousReference {
+  content_type: ContentType.Note;
+  reference_type: ContenteReferenceType.NoteToNote;
+}
+
+export interface FileToFileReference extends AnonymousReference {
+  content_type: ContentType.File;
+  reference_type: ContenteReferenceType.FileToFile;
+}
+
+// This is a union type with the reference_type as a discriminating field
+// It's like having typeguards for free on every members of the union,
+// see: https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions
+export type NewReference =
+  | TagToParentTagReference
+  | TagToNoteReference
+  | TagToFileReference
+  | FileToFileReference
+  | NoteToNoteReference;
+
+export type ContentReference = LegacyAnonymousReference | NewReference;
+
+export const isLegacyAnonymousReference = (
   x: ContentReference
-): x is TagToParentTagReference => {
-  return (x as any).reference_type === ContenteReferenceType.TagToParentTag;
+): x is LegacyAnonymousReference => {
+  return (x as any).reference_type === undefined;
+};
+
+export const isNewReference = (x: ContentReference): x is NewReference => {
+  return (x as any).reference_type !== undefined;
+};
+
+export const isLegacyTagToNoteReference = (
+  x: LegacyAnonymousReference,
+  currentItem: SNItem
+): x is LegacyTagToNoteReference => {
+  const isReferenceToANote = x.content_type === ContentType.Note;
+  const isReferenceFromATag = currentItem.content_type === ContentType.Tag;
+  return isReferenceToANote && isReferenceFromATag;
+};
+
+// Demo:
+
+const isUnreachable = (x: never): void => {
+  throw new Error('this type should be never');
+};
+
+const someFunctionThatProcessAnAnonymousGenericReference = (
+  someRef: ContentReference,
+  item: SNItem
+): void => {
+  if (isLegacyAnonymousReference(someRef)) {
+    if (isLegacyTagToNoteReference(someRef, item)) {
+      return;
+    }
+    return;
+  }
+  if (isNewReference(someRef)) {
+    console.log(someRef);
+
+    if (someRef.reference_type === ContenteReferenceType.TagToFile) {
+      // dataInput type is now "TagToFileReference"
+      console.log(someRef.someOtherInfo); // it supports additional fields that can change with the interfaces.
+      return;
+    } else if (someRef.reference_type === ContenteReferenceType.TagToNote) {
+      // dataInput type is now "TagToNoteReference"
+      return;
+    } else if (someRef.reference_type === ContenteReferenceType.NoteToNote) {
+      return;
+    } else if (
+      someRef.reference_type === ContenteReferenceType.TagToParentTag
+    ) {
+      return;
+    }
+  }
+
+  // This code doesn't pass compilation because we forgot to handle the new kind of reference we just created (FileToFile)
+  // In 3 months this function might be deep into the storage layer of the app and we forgot about it, but typescript won't.
+  isUnreachable(someRef);
+  return;
+};
+
+const someFunctionThatDealsWithTagsOnly = (
+  someRef: TagToFileReference | TagToNoteReference | TagToParentTagReference
+): void => {
+  if (someRef.reference_type === ContenteReferenceType.TagToFile) {
+    // dataInput type is now "TagToFileReference"
+    console.log(someRef.someOtherInfo); // it supports additional fields that can change with the interfaces.
+    return;
+  } else if (someRef.reference_type === ContenteReferenceType.TagToNote) {
+    // dataInput type is now "TagToNoteReference"
+    return;
+  } else if (
+    someRef.reference_type === ContenteReferenceType.TagToParentTag
+  ) {
+    // dataInput type is not TagToParentTagReference
+    someRef;
+    return;
+  }
+
+  isUnreachable(someRef);
+  return;
 };
 
 export type PayloadContent = {
