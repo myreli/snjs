@@ -1,3 +1,5 @@
+import { ContentReferenceType } from './generator';
+import { UuidString } from './../../types';
 import { FillItemContent } from '@Models/functions';
 import { PayloadField } from './fields';
 import { PayloadSource } from '@Payloads/sources';
@@ -13,6 +15,26 @@ import {
   RawPayload,
 } from '@Payloads/generator';
 import { PayloadFormat } from '@Payloads/formats';
+
+function GuessReferenceType(
+  payload: PurePayload,
+  reference: ContentReference
+): ContentReferenceType {
+  if (
+    payload.content_type === ContentType.Tag &&
+    reference.content_type === ContentType.Note
+  ) {
+    return ContentReferenceType.TagHasManyNotes;
+  }
+  if (
+    payload.content_type === ContentType.Tag &&
+    reference.content_type === ContentType.Tag
+  ) {
+    return ContentReferenceType.TagHasOneParentTag;
+  }
+
+  return ContentReferenceType.Unknown;
+}
 
 /**
  * A payload is a vehicle in which item data is transported or persisted.
@@ -88,13 +110,22 @@ export class PurePayload {
       );
     }
     this.content_type = rawPayload.content_type!;
+
     if (rawPayload.content) {
       if (isObject(rawPayload.content)) {
         this.content = FillItemContent(rawPayload.content as PayloadContent);
+
+        const references = this.content.references;
+        for (const reference of references) {
+          if (!reference.reference_type) {
+            reference.reference_type = GuessReferenceType(this, reference);
+          }
+        }
       } else {
         this.content = rawPayload.content;
       }
     }
+
     this.deleted = rawPayload.deleted;
     this.items_key_id = rawPayload.items_key_id;
     this.enc_item_key = rawPayload.enc_item_key;
@@ -190,6 +221,12 @@ export class PurePayload {
 
   get safeReferences(): ContentReference[] {
     return this.safeContent.references || [];
+  }
+
+  public getReference(uuid: UuidString): ContentReference {
+    return this.safeReferences.find(
+      (ref) => ref.uuid === uuid
+    ) as ContentReference;
   }
 
   get contentObject() {
