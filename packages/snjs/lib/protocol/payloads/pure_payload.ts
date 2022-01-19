@@ -16,26 +16,6 @@ import {
 } from '@Payloads/generator';
 import { PayloadFormat } from '@Payloads/formats';
 
-function GuessReferenceType(
-  payload: PurePayload,
-  reference: ContentReference
-): ContentReferenceType {
-  if (
-    payload.content_type === ContentType.Tag &&
-    reference.content_type === ContentType.Note
-  ) {
-    return ContentReferenceType.TagHasManyNotes;
-  }
-  if (
-    payload.content_type === ContentType.Tag &&
-    reference.content_type === ContentType.Tag
-  ) {
-    return ContentReferenceType.TagHasOneParentTag;
-  }
-
-  return ContentReferenceType.Unknown;
-}
-
 /**
  * A payload is a vehicle in which item data is transported or persisted.
  * This class represents an abstract PurePayload which does not have any fields. Instead,
@@ -114,13 +94,6 @@ export class PurePayload {
     if (rawPayload.content) {
       if (isObject(rawPayload.content)) {
         this.content = FillItemContent(rawPayload.content as PayloadContent);
-
-        const references = this.content.references;
-        for (const reference of references) {
-          if (!reference.reference_type) {
-            reference.reference_type = GuessReferenceType(this, reference);
-          }
-        }
       } else {
         this.content = rawPayload.content;
       }
