@@ -6,7 +6,7 @@ import {
 } from './../../protocol/key_params';
 import { ProtocolVersion } from './../../protocol/versions';
 import { Role, Subscription } from '@standardnotes/auth';
-import { RoleName, SubscriptionName } from '@standardnotes/common';
+import { RoleName, SubscriptionName, ItemIntegrityHash } from '@standardnotes/common';
 import { FeatureDescription } from '@standardnotes/features';
 import { UuidString } from '@Lib/types';
 
@@ -298,4 +298,20 @@ export type ActionResponse = HttpResponse & {
   item?: any;
   keyParams?: any;
   auth_params?: any;
+};
+
+export type CheckIntegrityResponse = MinimalHttpResponse & {
+  data: {
+    mismatches: ItemIntegrityHash[];
+  };
+};
+
+export type GetSingleItemResponse = MinimalHttpResponse & {
+  data: {
+    success: true;
+    item: RawPayload;
+  } | {
+    success: false;
+    message: string;
+  };
 };

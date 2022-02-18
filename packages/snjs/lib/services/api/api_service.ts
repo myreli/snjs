@@ -28,9 +28,11 @@ import {
   GetOfflineFeaturesResponse,
   ListedRegistrationResponse,
   User,
+  CheckIntegrityResponse,
+  GetSingleItemResponse,
 } from './responses';
 import { Session, TokenSession } from './session';
-import { ContentType, ErrorObject } from '@standardnotes/common';
+import { ContentType, ErrorObject, ItemIntegrityHash, Uuid } from '@standardnotes/common';
 import { PurePayload } from '@Payloads/pure_payload';
 import { SNRootKeyParams } from './../../protocol/key_params';
 import { SNStorageService } from './../storage_service';
@@ -50,7 +52,6 @@ import { Role } from '@standardnotes/auth';
 import { FeatureDescription } from '@standardnotes/features';
 import { API_MESSAGE_FAILED_OFFLINE_ACTIVATION } from '@Services/api/messages';
 import {
-  APPLICATION_DEFAULT_HOSTS,
   isUrlFirstParty,
   TRUSTED_FEATURE_HOSTS,
 } from '@Lib/hosts';
@@ -76,6 +77,8 @@ type PathNamesV1 = {
   purchase: string;
   subscriptionTokens: string;
   offlineFeatures: string;
+  checkIntegrity: string;
+  getSingleItem: (uuid: Uuid) => string;
 };
 
 type PathNamesV2 = {
@@ -110,6 +113,8 @@ const Paths: {
     purchase: '/v1/purchase',
     subscriptionTokens: '/v1/subscription-tokens',
     offlineFeatures: '/v1/offline/features',
+    checkIntegrity: '/v1/items/check-integrity',
+    getSingleItem: (uuid: Uuid) => `/v1/items/${uuid}`,
   },
   v2: {
     subscriptions: '/v2/subscriptions',
@@ -467,6 +472,69 @@ export class SNApiService extends AbstractService<
         return this.errorResponseWithFallbackMessage(
           errorResponse,
           messages.API_MESSAGE_GENERIC_SYNC_FAIL
+        );
+      });
+    this.processResponse(response);
+
+    return response;
+  }
+
+  async checkIntegrity(
+    integrityHashes: ItemIntegrityHash[],
+  ): Promise<CheckIntegrityResponse | HttpResponse> {
+    const preprocessingError = this.preprocessingError();
+    if (preprocessingError) {
+      return preprocessingError;
+    }
+    const url = joinPaths(this.host, Paths.v1.checkIntegrity);
+
+    const params = {
+      integrityHashes,
+    }
+
+    const response = await this.httpService
+      .postAbsolute(url, params, this.session!.authorizationValue)
+      .catch<HttpResponse>(async (errorResponse) => {
+        this.preprocessAuthenticatedErrorResponse(errorResponse);
+        if (isErrorResponseExpiredToken(errorResponse)) {
+          return this.refreshSessionThenRetryRequest({
+            verb: HttpVerb.Post,
+            url,
+            params,
+          });
+        }
+        return this.errorResponseWithFallbackMessage(
+          errorResponse,
+          messages.API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
+        );
+      });
+    this.processResponse(response);
+
+    return response;
+  }
+
+  async getSingleItem(
+    itemUuid: Uuid,
+  ): Promise<GetSingleItemResponse | HttpResponse> {
+    const preprocessingError = this.preprocessingError();
+    if (preprocessingError) {
+      return preprocessingError;
+    }
+    const url = joinPaths(this.host, Paths.v1.getSingleItem(itemUuid));
+
+    const response = await this.httpService
+      .getAbsolute(url, {}, this.session!.authorizationValue)
+      .catch<HttpResponse>(async (errorResponse) => {
+        this.preprocessAuthenticatedErrorResponse(errorResponse);
+        if (isErrorResponseExpiredToken(errorResponse)) {
+          return this.refreshSessionThenRetryRequest({
+            verb: HttpVerb.Get,
+            url,
+          });
+        }
+        return this.errorResponseWithFallbackMessage(
+          errorResponse,
+          messages.API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
         );
       });
     this.processResponse(response);
