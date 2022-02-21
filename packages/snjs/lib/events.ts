@@ -65,7 +65,6 @@ export enum ApplicationEvent {
   UnprotectedSessionExpired = 29,
   /** Called when the app first launches and after first sync request made after sign in */
   CompletedInitialSync = 30,
-  IntegrityCheckCompleted = 31,
 }
 
 export function applicationEventForSyncEvent(syncEvent: SyncEvent) {

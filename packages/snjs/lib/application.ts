@@ -1973,20 +1973,6 @@ export class SNApplication implements ListedInterface {
       this.itemManager,
     );
 
-    this.serviceObservers.push(
-      this.integrityService.addEventObserver((event) => {
-        switch (event) {
-          case IntegrityEvent.IntegrityCheckCompleted: {
-            void this.notifyEvent(ApplicationEvent.IntegrityCheckCompleted);
-            break;
-          }
-          default: {
-            assertUnreachable(event);
-          }
-        }
-      })
-    );
-
     this.services.push(this.integrityService);
   }
 
