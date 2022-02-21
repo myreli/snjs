@@ -1893,6 +1893,7 @@ export class SNApplication implements ListedInterface {
     (this.settingsService as unknown) = undefined;
     (this.mfaService as unknown) = undefined;
     (this.listedService as unknown) = undefined;
+    (this.integrityService as unknown) = undefined;
 
     this.services = [];
   }
