@@ -112,7 +112,7 @@ type SyncPromise = {
  */
 export class SNSyncService extends AbstractService<
   SyncEvent,
-  SyncResponse | { source: SyncSources }
+  SyncResponse | { source: SyncSources, needsIntegrityCheck: boolean }
 > {
   private state?: SyncState;
   private opStatus!: SyncOpStatus;
@@ -666,6 +666,7 @@ export class SNSyncService extends AbstractService<
     if (useMode !== SyncModes.DownloadFirst) {
       await this.notifyEvent(SyncEvent.FullSyncCompleted, {
         source: options.source,
+        needsIntegrityCheck: 'checkIntegrity' in operation && operation.checkIntegrity,
       });
     }
 
@@ -673,7 +674,10 @@ export class SNSyncService extends AbstractService<
       if (online) {
         this.completedOnlineDownloadFirstSync = true;
       }
-      await this.notifyEvent(SyncEvent.DownloadFirstSyncCompleted);
+      await this.notifyEvent(SyncEvent.DownloadFirstSyncCompleted, {
+        source: options.source,
+        needsIntegrityCheck: true,
+      });
       /** Perform regular sync now that we've finished download first sync */
       await this.sync({
         source: SyncSources.AfterDownloadFirst,

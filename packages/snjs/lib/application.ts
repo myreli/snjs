@@ -137,6 +137,7 @@ import {
 import { TagsToFoldersMigrationApplicator } from './migrations/applicators/tags_to_folders';
 import { RemoteSession } from './services/api/session';
 import { RoleName } from '.';
+import { IntegrityEvent, SNIntegrityService } from './services/integrity_service';
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000;
@@ -189,6 +190,7 @@ export class SNApplication implements ListedInterface {
   private settingsService!: SNSettingsService;
   private mfaService!: SNMfaService;
   private listedService!: ListedService;
+  private integrityService!: SNIntegrityService;
 
   private eventHandlers: ApplicationObserver[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1863,6 +1865,7 @@ export class SNApplication implements ListedInterface {
     this.createMfaService();
     this.createListedService();
     this.createActionsManager();
+    this.createIntegrityService();
   }
 
   private clearServices() {
@@ -1960,6 +1963,30 @@ export class SNApplication implements ListedInterface {
       identifier: this.identifier,
     });
     this.services.push(this.migrationService);
+  }
+
+  private createIntegrityService(): void {
+    this.integrityService = new SNIntegrityService(
+      this.apiService,
+      this.syncService,
+      this.itemManager,
+    );
+
+    this.serviceObservers.push(
+      this.integrityService.addEventObserver((event) => {
+        switch (event) {
+          case IntegrityEvent.IntegrityCheckCompleted: {
+            void this.notifyEvent(ApplicationEvent.IntegrityCheckCompleted);
+            break;
+          }
+          default: {
+            assertUnreachable(event);
+          }
+        }
+      })
+    );
+
+    this.services.push(this.integrityService);
   }
 
   private createCredentialService(): void {

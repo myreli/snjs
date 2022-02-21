@@ -15,7 +15,7 @@ import {
   ItemCollection,
   SortDirection,
 } from '@Protocol/collection/item_collection';
-import { ContentType } from '@standardnotes/common';
+import { ContentType, ItemIntegrityHash } from '@standardnotes/common';
 import { ComponentMutator } from './../models/app/component';
 import {
   ActionsExtensionMutator,
@@ -225,6 +225,10 @@ export class ItemManager extends AbstractService {
    */
   public get nonDeletedItems() {
     return this.collection.nondeletedElements();
+  }
+
+  public get integrityHashes(): ItemIntegrityHash[] {
+    return this.collection.integrityHashes();
   }
 
   /**

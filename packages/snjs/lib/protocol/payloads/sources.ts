@@ -43,6 +43,7 @@ export enum PayloadSource {
   RemoteHistory = 20,
   /** Payloads which have been rejected and unwilling to be saved by the server */
   RemoteRejected = 21,
+  RemoteIntegrityChecked = 22,
 }
 
 /**

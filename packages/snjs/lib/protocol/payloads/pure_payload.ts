@@ -228,4 +228,8 @@ export class PurePayload {
   public get serverUpdatedAt(): Date {
     return this.updated_at;
   }
+
+  public get serverUpdatedAtTimestamp(): number | undefined {
+    return this.updated_at_timestamp;
+  }
 }
