@@ -5,7 +5,8 @@ import { PureService } from './pure_service';
 import { SyncResponse } from './sync/response';
 import { ItemManager } from './item_manager';
 import { CreateMaxPayloadFromAnyObject } from '@Lib/protocol/payloads/generator';
-import { PayloadSource } from '..';
+import { PayloadSource } from '@Payloads/sources';
+import { GetSingleItemResponse, HttpResponse } from './api/responses';
 
 export const enum IntegrityEvent {
   IntegrityCheckCompleted = 'IntegrityCheckCompleted',
@@ -48,20 +49,26 @@ export class SNIntegrityService extends PureService<IntegrityEvent> {
             throw new Error('Could not obtain integrity check');
           }
 
+          const serverItemResponsePromises: Promise<HttpResponse | GetSingleItemResponse>[] = []
           if ('mismatches' in integrityCheckResponse.data && integrityCheckResponse?.data?.mismatches.length > 0) {
             for (const mismatch of integrityCheckResponse.data.mismatches) {
-              const serverItemResponse = await this.apiService.getSingleItem(mismatch.uuid)
-              if (serverItemResponse.data === undefined || serverItemResponse.error || !('item' in serverItemResponse.data)) {
-                this.log(`Could not obtain item for integrity adjustments: ${serverItemResponse?.error?.message}`);
-
-                throw new Error('Could not obtain item for integrity adjustments');
-              }
-
-              this.itemManager.emitItemFromPayload(
-                CreateMaxPayloadFromAnyObject(serverItemResponse.data.item),
-                PayloadSource.RemoteRetrieved,
-              )
+              serverItemResponsePromises.push(this.apiService.getSingleItem(mismatch.uuid))
             }
+          }
+
+          const serverItemResponses = await Promise.all(serverItemResponsePromises)
+
+          for (const serverItemResponse of serverItemResponses) {
+            if (serverItemResponse.data === undefined || serverItemResponse.error || !('item' in serverItemResponse.data)) {
+              this.log(`Could not obtain item for integrity adjustments: ${serverItemResponse?.error?.message}`);
+
+              throw new Error('Could not obtain item for integrity adjustments');
+            }
+
+            this.itemManager.emitItemFromPayload(
+              CreateMaxPayloadFromAnyObject(serverItemResponse.data.item),
+              PayloadSource.RemoteRetrieved,
+            )
           }
 
           this.notifyEvent(IntegrityEvent.IntegrityCheckCompleted);
