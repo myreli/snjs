@@ -59,7 +59,7 @@ export class SNIntegrityService extends PureService<IntegrityEvent> {
 
               this.itemManager.emitItemFromPayload(
                 CreateMaxPayloadFromAnyObject(serverItemResponse.data.item),
-                PayloadSource.RemoteIntegrityChecked,
+                PayloadSource.RemoteRetrieved,
               )
             }
           }
