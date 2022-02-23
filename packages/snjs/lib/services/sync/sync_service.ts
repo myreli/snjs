@@ -1,6 +1,5 @@
 import { SNItemsKey } from '@Models/app/items_key';
 import { SNHistoryManager } from './../history/history_manager';
-import { SyncEvent } from '@Services/sync/events';
 import { StorageKey } from '@Lib/storage_keys';
 import { UuidString } from './../../types';
 import { ApplicationOptions } from './../../options';
@@ -30,7 +29,7 @@ import { PayloadSource } from '@Payloads/sources';
 import { ImmutablePayloadCollection } from '@Protocol/collection/payload_collection';
 import { CreateMaxPayloadFromAnyObject } from '@Payloads/generator';
 import { EncryptionIntent } from '@Protocol/intents';
-import { ContentType } from '@standardnotes/common';
+import { ContentType, SyncEvent, SyncSources } from '@standardnotes/common';
 import { CreateItemFromPayload } from '@Models/generator';
 import { Uuids } from '@Models/functions';
 import { SyncSignal, SyncStats } from '@Services/sync/signals';
@@ -69,16 +68,6 @@ export enum SyncModes {
   DownloadFirst = 2,
 }
 
-export enum SyncSources {
-  External = 1,
-  SpawnQueue = 2,
-  ResolveQueue = 3,
-  MoreDirtyItems = 4,
-  AfterDownloadFirst = 5,
-  IntegrityCheck = 6,
-  ResolveOutOfSync = 7,
-}
-
 export type SyncOptions = {
   queueStrategy?: SyncQueueStrategy;
   mode?: SyncModes;
@@ -112,7 +101,7 @@ type SyncPromise = {
  */
 export class SNSyncService extends AbstractService<
   SyncEvent,
-  SyncResponse | { source: SyncSources, needsIntegrityCheck: boolean }
+  SyncResponse | { source: SyncSources }
 > {
   private state?: SyncState;
   private opStatus!: SyncOpStatus;

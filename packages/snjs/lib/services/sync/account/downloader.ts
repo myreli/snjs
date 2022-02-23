@@ -1,10 +1,7 @@
 import { filterDisallowedRemotePayloads } from '@Lib/services/sync/filter';
 import { PurePayload } from '@Payloads/pure_payload';
-import { ContentType } from '@standardnotes/common';
-import {
-  RawPayload,
-  CreateSourcedPayloadFromObject,
-} from '@Payloads/generator';
+import { ContentType, RawPayload } from '@standardnotes/common';
+import { CreateSourcedPayloadFromObject } from '@Payloads/generator';
 import { PayloadSource } from '@Lib/protocol/payloads/sources';
 import { SNApiService } from '../../api/api_service';
 import { SNProtocolService } from '../../protocol_service';

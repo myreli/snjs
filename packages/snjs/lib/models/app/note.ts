@@ -1,7 +1,7 @@
 import { ContentType } from '@Lib/index';
 import { isNullOrUndefined } from '@standardnotes/utils';
 import { AppDataField, ItemMutator, SNItem } from '@Models/core/item';
-import { PayloadContent } from '@Payloads/generator';
+import { PayloadContent } from '@standardnotes/common';
 import { PayloadFormat } from './../../protocol/payloads/formats';
 import { PurePayload } from './../../protocol/payloads/pure_payload';
 

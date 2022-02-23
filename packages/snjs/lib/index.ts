@@ -16,7 +16,7 @@ export type {
   ApplicationEventPayload,
   IconType,
 } from './types';
-export type { ApplicationIdentifier } from '@standardnotes/common';
+export type { ApplicationIdentifier, PayloadContent } from '@standardnotes/common';
 
 export { SNApplicationGroup } from './application_group';
 export { DeinitSource } from './types';
@@ -224,7 +224,6 @@ export { ProtocolVersion } from '@Lib/protocol/versions';
 export { PayloadFormat } from '@Payloads/formats';
 export { PurePayload } from '@Payloads/pure_payload';
 export { PayloadField } from '@Payloads/fields';
-export type { PayloadContent } from '@Payloads/generator';
 
 export {
   NotesDisplayCriteria,
@@ -251,13 +250,12 @@ export { SNLog } from './log';
 
 /** Used by e2e tests */
 export { GetFeatures, FeatureIdentifier } from '@standardnotes/features';
-export { RoleName } from '@standardnotes/common';
+export { ApplicationStage, RoleName } from '@standardnotes/common';
 export {
   SettingName,
   MuteFailedBackupsEmailsOption,
 } from '@standardnotes/settings';
 export { Migration2_20_0 } from './migrations/2_20_0';
 export { Migration2_42_0 } from './migrations/2_42_0';
-export { ApplicationStage } from '@standardnotes/common';
 
 export { ActionVerb } from '@Lib/models/app/extension';

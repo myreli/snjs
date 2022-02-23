@@ -1,5 +1,5 @@
 import { API_MESSAGE_RATE_LIMITED, UNKNOWN_ERROR } from './messages';
-import { HttpResponse, StatusCode } from './responses';
+import { HttpResponse, StatusCode } from '@standardnotes/common';
 import { isNullOrUndefined } from '@standardnotes/utils';
 import { SnjsVersion } from '@Lib/version';
 import { Environment } from '@Lib/platforms';

@@ -15,7 +15,7 @@ import {
   ItemCollection,
   SortDirection,
 } from '@Protocol/collection/item_collection';
-import { ContentType, ItemIntegrityHash } from '@standardnotes/common';
+import { ContentType, IntegrityPayload, PayloadContent } from '@standardnotes/common';
 import { ComponentMutator } from './../models/app/component';
 import {
   ActionsExtensionMutator,
@@ -39,16 +39,13 @@ import {
   TagNoteCountChangeObserver,
   TagNotesIndex,
 } from './../protocol/collection/tag_notes_index';
-import {
-  PayloadContent,
-  PayloadOverride,
-} from './../protocol/payloads/generator';
+import { PayloadOverride } from './../protocol/payloads/generator';
 import { PurePayload } from './../protocol/payloads/pure_payload';
 import { PayloadSource } from './../protocol/payloads/sources';
 import { UuidString } from './../types';
 import { Uuid } from './../uuid';
 import { PayloadManager } from './payload_manager';
-import { AbstractService } from '@standardnotes/services';
+import { AbstractService, ItemManagerInterface } from '@standardnotes/services';
 
 type ObserverCallback = (
   /** The items are pre-existing but have been changed */
@@ -87,7 +84,7 @@ export const isTagOrNote = (x: SNItem): x is SNNote | SNTag =>
  * will then notify  its observers (which is us), we'll convert the payloads to items,
  * and then  we'll propagate them to our listeners.
  */
-export class ItemManager extends AbstractService {
+export class ItemManager extends AbstractService implements ItemManagerInterface {
   private unsubChangeObserver: () => void;
   private observers: Observer[] = [];
   private collection!: ItemCollection;
@@ -227,8 +224,8 @@ export class ItemManager extends AbstractService {
     return this.collection.nondeletedElements();
   }
 
-  public get integrityHashes(): ItemIntegrityHash[] {
-    return this.collection.integrityHashes();
+  public get integrityPayloads(): IntegrityPayload[] {
+    return this.collection.integrityPayloads();
   }
 
   /**

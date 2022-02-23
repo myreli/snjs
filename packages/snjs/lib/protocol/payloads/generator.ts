@@ -2,40 +2,22 @@ import { AnyKeyParamsContent } from './../key_params';
 import { ProtocolVersion } from './../versions';
 import { UuidString } from './../../types';
 import { PurePayload } from '@Payloads/pure_payload';
-import { PayloadSource } from '@Payloads/sources';
-import { ContentType } from '@standardnotes/common';
+import {
+  ContentType,
+  ContentReference,
+  LegacyAnonymousReference,
+  Reference,
+  LegacyTagToNoteReference,
+  TagToParentTagReference,
+  ContenteReferenceType,
+  PayloadContent,
+  PayloadSource,
+  PayloadField,
+  RawPayload
+} from '@standardnotes/common';
 import { EncryptionIntent } from '@Protocol/intents';
 import { Copy, pickByCopy, uniqueArray } from '@standardnotes/utils';
-import { PayloadField } from '@Payloads/fields';
 import { SNItem } from '@Lib/models';
-
-export interface LegacyAnonymousReference {
-  uuid: string;
-  content_type: string;
-}
-
-export interface LegacyTagToNoteReference extends LegacyAnonymousReference {
-  content_type: ContentType.Note;
-}
-
-export enum ContenteReferenceType {
-  TagToParentTag = 'TagToParentTag',
-}
-
-export interface AnonymousReference {
-  uuid: string;
-  content_type: ContentType;
-  reference_type: ContenteReferenceType;
-}
-
-export interface TagToParentTagReference extends AnonymousReference {
-  content_type: ContentType.Tag;
-  reference_type: ContenteReferenceType.TagToParentTag;
-}
-
-export type Reference = TagToParentTagReference;
-
-export type ContentReference = LegacyAnonymousReference | Reference;
 
 export const isLegacyAnonymousReference = (
   x: ContentReference
@@ -65,39 +47,11 @@ export const isTagToParentTagReference = (
   );
 };
 
-export type PayloadContent = {
-  [key: string]: any;
-  references: ContentReference[];
-};
-
 export type PayloadOverride =
   | {
       [key in PayloadField]?: any;
     }
   | PurePayload;
-
-export type RawPayload = {
-  uuid: string;
-  content_type: ContentType;
-  content?: PayloadContent | string;
-  deleted?: boolean;
-  items_key_id?: string;
-  enc_item_key?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  created_at_timestamp?: number;
-  updated_at_timestamp?: number;
-  dirtiedDate?: Date;
-  dirty?: boolean;
-  errorDecrypting?: boolean;
-  waitingForKey?: boolean;
-  errorDecryptingValueChanged?: boolean;
-  lastSyncBegan?: Date;
-  lastSyncEnd?: Date;
-  auth_hash?: string;
-  auth_params?: any;
-  duplicate_of?: string;
-};
 
 export type RawEncryptionParameters = {
   uuid?: string;

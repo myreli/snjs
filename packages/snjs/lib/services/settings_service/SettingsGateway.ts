@@ -4,13 +4,13 @@ import {
   DeleteSettingResponse,
   GetSettingResponse,
   ListSettingsResponse,
-  StatusCode,
   UpdateSettingResponse,
   User,
 } from '../api/responses';
 import { UuidString } from '@Lib/types';
 import { SensitiveSettingName } from './SensitiveSettingName';
 import { Settings } from './Settings';
+import { StatusCode } from '@standardnotes/common';
 
 interface SettingsAPI {
   listSettings(userUuid: UuidString): Promise<ListSettingsResponse>;

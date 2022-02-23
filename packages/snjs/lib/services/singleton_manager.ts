@@ -1,4 +1,4 @@
-import { ContentType } from '@standardnotes/common';
+import { ContentType, PayloadContent } from '@standardnotes/common';
 import { ItemManager } from '@Services/item_manager';
 import { SNPredicate } from '@Models/core/predicate';
 import { SNItem, SingletonStrategy } from '@Models/core/item';
@@ -7,10 +7,7 @@ import {
   extendArray,
   isNullOrUndefined,
 } from '@standardnotes/utils';
-import {
-  CreateMaxPayloadFromAnyObject,
-  PayloadContent,
-} from '@Payloads/generator';
+import { CreateMaxPayloadFromAnyObject } from '@Payloads/generator';
 import { Uuid } from '@Lib/uuid';
 import { SyncEvent } from '@Services/sync/events';
 import { SNSyncService } from './sync/sync_service';

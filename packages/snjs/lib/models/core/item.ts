@@ -1,14 +1,15 @@
-import { ContentType } from '@standardnotes/common';
+import {
+  ContentType,
+  PayloadContent,
+  ContentReference,
+  ItemInterface
+} from '@standardnotes/common';
 import { HistoryEntry } from '@Services/history/entries/history_entry';
 import { SNLog } from './../../log';
 import { ProtocolVersion } from '@Protocol/versions';
 import { PayloadFormat } from './../../protocol/payloads/formats';
 import { ConflictStrategy } from '@Protocol/payloads/deltas/strategies';
 import { UuidString } from './../../types';
-import {
-  PayloadContent,
-  ContentReference,
-} from './../../protocol/payloads/generator';
 import { CopyPayload, PayloadOverride } from '@Payloads/generator';
 import { PurePayload } from './../../protocol/payloads/pure_payload';
 import {
@@ -68,7 +69,7 @@ export enum SingletonStrategy {
 /**
  * The most abstract item that any syncable item needs to extend from.
  */
-export class SNItem {
+export class SNItem implements ItemInterface {
   public readonly payload: PurePayload;
   public readonly conflictOf?: UuidString;
   public readonly duplicateOf?: UuidString;

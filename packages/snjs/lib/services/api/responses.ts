@@ -1,58 +1,12 @@
-import { RawPayload } from '@Payloads/generator';
 import { ApiEndpointParam } from './keys';
 import {
   AnyKeyParamsContent,
   KeyParamsOrigination,
 } from './../../protocol/key_params';
 import { ProtocolVersion } from './../../protocol/versions';
-import { Role, Subscription } from '@standardnotes/auth';
-import { RoleName, SubscriptionName, ItemIntegrityHash } from '@standardnotes/common';
+import { Subscription } from '@standardnotes/auth';
+import { HttpResponse, RawPayload, RoleName, StatusCode, SubscriptionName } from '@standardnotes/common';
 import { FeatureDescription } from '@standardnotes/features';
-import { UuidString } from '@Lib/types';
-
-export enum StatusCode {
-  LocalValidationError = 10,
-  CanceledMfa = 11,
-  UnknownError = 12,
-
-  HttpStatusMinSuccess = 200,
-  HttpStatusNoContent = 204,
-  HttpStatusMaxSuccess = 299,
-  /** The session's access token is expired, but the refresh token is valid */
-  HttpStatusExpiredAccessToken = 498,
-  /** The session's access token and refresh token are expired, user must reauthenticate */
-  HttpStatusInvalidSession = 401,
-  /** User's IP is rate-limited. */
-  HttpStatusForbidden = 403,
-  HttpBadRequest = 400,
-}
-
-type Error = {
-  message: string;
-  status: number;
-  tag?: string;
-  /** In the case of MFA required responses,
-   * the required prompt is returned as part of the error */
-  payload?: {
-    mfa_key?: string;
-  };
-};
-
-export type HttpResponse = {
-  status?: StatusCode;
-  error?: Error;
-  data?: {
-    error?: Error;
-  };
-  meta?: ResponseMeta;
-};
-
-export type ResponseMeta = {
-  auth: {
-    userUuid?: UuidString;
-    roles?: Role[];
-  };
-};
 
 export function isErrorResponseExpiredToken(errorResponse: HttpResponse) {
   return errorResponse.status === StatusCode.HttpStatusExpiredAccessToken;
@@ -298,20 +252,4 @@ export type ActionResponse = HttpResponse & {
   item?: any;
   keyParams?: any;
   auth_params?: any;
-};
-
-export type CheckIntegrityResponse = MinimalHttpResponse & {
-  data: {
-    mismatches: ItemIntegrityHash[];
-  };
-};
-
-export type GetSingleItemResponse = MinimalHttpResponse & {
-  data: {
-    success: true;
-    item: RawPayload;
-  } | {
-    success: false;
-    message: string;
-  };
 };

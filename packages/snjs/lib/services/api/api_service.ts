@@ -1,7 +1,6 @@
 import { SNFeatureRepo } from './../../models/app/feature_repo';
 import { UuidString } from './../../types';
 import {
-  HttpResponse,
   RegistrationResponse,
   RevisionListEntry,
   RevisionListResponse,
@@ -9,9 +8,7 @@ import {
   SignInResponse,
   SignOutResponse,
   SingleRevisionResponse,
-  StatusCode,
   isErrorResponseExpiredToken,
-  ResponseMeta,
   KeyParamsResponse,
   SessionListResponse,
   RawSyncResponse,
@@ -28,11 +25,20 @@ import {
   GetOfflineFeaturesResponse,
   ListedRegistrationResponse,
   User,
-  CheckIntegrityResponse,
-  GetSingleItemResponse,
 } from './responses';
 import { Session, TokenSession } from './session';
-import { ContentType, ErrorObject, ItemIntegrityHash, Uuid } from '@standardnotes/common';
+import {
+  ContentType,
+  Role,
+  ErrorObject,
+  IntegrityPayload,
+  ResponseMeta,
+  StatusCode,
+  HttpResponse,
+  Uuid,
+  CheckIntegrityResponse,
+  GetSingleItemResponse
+} from '@standardnotes/common';
 import { PurePayload } from '@Payloads/pure_payload';
 import { SNRootKeyParams } from './../../protocol/key_params';
 import { SNStorageService } from './../storage_service';
@@ -48,14 +54,13 @@ import { ApiEndpointParam } from '@Services/api/keys';
 import * as messages from '@Services/api/messages';
 import { isNullOrUndefined, joinPaths } from '@standardnotes/utils';
 import { StorageKey } from '@Lib/storage_keys';
-import { Role } from '@standardnotes/auth';
 import { FeatureDescription } from '@standardnotes/features';
 import { API_MESSAGE_FAILED_OFFLINE_ACTIVATION } from '@Services/api/messages';
 import {
   isUrlFirstParty,
   TRUSTED_FEATURE_HOSTS,
 } from '@Lib/hosts';
-import { AbstractService } from '@standardnotes/services';
+import { AbstractService, IntegrityApiInterface, ItemApiInterface } from '@standardnotes/services';
 
 type PathNamesV1 = {
   keyParams: string;
@@ -135,10 +140,11 @@ export type MetaReceivedData = {
   userRoles: Role[];
 };
 
-export class SNApiService extends AbstractService<
-  ApiServiceEvent.MetaReceived,
-  MetaReceivedData
-> {
+export class SNApiService
+  extends AbstractService<ApiServiceEvent.MetaReceived, MetaReceivedData>
+  implements
+    IntegrityApiInterface,
+    ItemApiInterface {
   private session?: Session;
   public user?: User;
   private registering = false;
@@ -480,7 +486,7 @@ export class SNApiService extends AbstractService<
   }
 
   async checkIntegrity(
-    integrityHashes: ItemIntegrityHash[],
+    integrityPayloads: IntegrityPayload[],
   ): Promise<CheckIntegrityResponse | HttpResponse> {
     const preprocessingError = this.preprocessingError();
     if (preprocessingError) {
@@ -489,7 +495,7 @@ export class SNApiService extends AbstractService<
     const url = joinPaths(this.host, Paths.v1.checkIntegrity);
 
     const params = {
-      integrityHashes,
+      integrityPayloads,
     }
 
     const response = await this.httpService

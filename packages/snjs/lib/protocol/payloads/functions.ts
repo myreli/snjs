@@ -4,7 +4,7 @@ import { CreateItemFromPayload } from '@Models/generator';
 import { CopyPayload, PayloadOverride } from '@Payloads/generator';
 import { PurePayload } from '@Payloads/pure_payload';
 import { ImmutablePayloadCollection } from '@Protocol/collection/payload_collection';
-import { ContentType } from '@standardnotes/common';
+import { ContentReference, PayloadContent, ContentType } from '@standardnotes/common';
 import remove from 'lodash/remove';
 import {
   ComponentArea,
@@ -13,7 +13,6 @@ import {
 } from './../../models/app/component';
 import { MutationType } from './../../models/core/item';
 import { UuidString } from './../../types';
-import { ContentReference, PayloadContent } from './generator';
 
 type AffectorFunction = (
   basePayload: PurePayload,

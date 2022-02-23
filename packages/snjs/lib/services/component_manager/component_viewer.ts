@@ -18,11 +18,7 @@ import {
   Platform,
   platformToString,
 } from '@Lib/platforms';
-import {
-  PayloadContent,
-  RawPayload,
-  CreateSourcedPayloadFromObject,
-} from '@Payloads/generator';
+import { CreateSourcedPayloadFromObject } from '@Payloads/generator';
 import {
   ComponentMessage,
   MessageReplyData,
@@ -39,7 +35,7 @@ import { PayloadSource, PayloadFormat } from '@Lib/protocol/payloads';
 import { ItemManager } from '@Services/item_manager';
 import { UuidString } from '@Lib/types';
 import { SNItem, MutationType } from '@Models/core/item';
-import { ContentType, Runtime } from '@standardnotes/common';
+import { ContentType, PayloadContent, RawPayload, Runtime } from '@standardnotes/common';
 import { SNComponent, SNNote } from '@Lib/models';
 import {
   concatArrays,

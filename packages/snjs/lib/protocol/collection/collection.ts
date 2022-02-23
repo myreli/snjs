@@ -2,7 +2,7 @@ import { UuidMap } from './uuid_map';
 import { extendArray, isString } from '@standardnotes/utils';
 import { SNItem } from './../../models/core/item';
 import remove from 'lodash/remove';
-import { ContentType, ItemIntegrityHash } from '@standardnotes/common';
+import { ContentType, IntegrityPayload } from '@standardnotes/common';
 import { UuidString } from './../../types';
 import { PurePayload } from '@Payloads/pure_payload';
 
@@ -95,7 +95,7 @@ export class MutableCollection<T extends PurePayload | SNItem> {
     return this.findAll(uuids) as T[];
   }
 
-  public integrityHashes(): ItemIntegrityHash[] {
+  public integrityPayloads(): IntegrityPayload[] {
     const nondeletedElements = this.nondeletedElements();
 
     return nondeletedElements.map((item) => ({

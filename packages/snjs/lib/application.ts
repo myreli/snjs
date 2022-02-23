@@ -19,7 +19,7 @@ import {
   SortDirection,
 } from '@Protocol/collection/item_collection';
 import { Uuids } from '@Models/functions';
-import { PayloadOverride, RawPayload } from './protocol/payloads/generator';
+import { PayloadOverride } from './protocol/payloads/generator';
 import { ApplicationStage, ApplicationIdentifier } from '@standardnotes/common';
 import {
   DeinitSource,
@@ -60,11 +60,17 @@ import {
   sleep,
   nonSecureRandomIdentifier,
 } from '@standardnotes/utils';
-import { AnyRecord, ContentType, Runtime } from '@standardnotes/common';
+import {
+  AnyRecord,
+  ContentType,
+  PayloadContent,
+  RawPayload,
+  Runtime,
+  HttpResponse,
+} from '@standardnotes/common';
 import {
   CopyPayload,
   CreateMaxPayloadFromAnyObject,
-  PayloadContent,
 } from '@Payloads/generator';
 import { PayloadSource } from '@Payloads/sources';
 import { CreateItemFromPayload } from '@Models/generator';
@@ -92,7 +98,7 @@ import {
   SNFeaturesService,
   SyncModes,
 } from './services';
-import { DeviceInterface, ServiceInterface } from '@standardnotes/services';
+import { DeviceInterface, ServiceInterface, IntegrityService } from '@standardnotes/services';
 import {
   BACKUP_FILE_MORE_RECENT_THAN_ACCOUNT,
   ErrorAlertStrings,
@@ -111,7 +117,6 @@ import {
   AvailableSubscriptions,
   GetAvailableSubscriptionsResponse,
   GetSubscriptionResponse,
-  HttpResponse,
   ListedAccount,
   ListedAccountInfo,
   SignInResponse,
@@ -137,7 +142,6 @@ import {
 import { TagsToFoldersMigrationApplicator } from './migrations/applicators/tags_to_folders';
 import { RemoteSession } from './services/api/session';
 import { RoleName } from '.';
-import { IntegrityEvent, SNIntegrityService } from './services/integrity_service';
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000;
@@ -190,7 +194,7 @@ export class SNApplication implements ListedInterface {
   private settingsService!: SNSettingsService;
   private mfaService!: SNMfaService;
   private listedService!: ListedService;
-  private integrityService!: SNIntegrityService;
+  private integrityService!: IntegrityService;
 
   private eventHandlers: ApplicationObserver[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1967,10 +1971,10 @@ export class SNApplication implements ListedInterface {
   }
 
   private createIntegrityService(): void {
-    this.integrityService = new SNIntegrityService(
-      this.apiService,
-      this.syncService,
-      this.itemManager,
+    this.integrityService = new IntegrityService(
+      // this.apiService,
+      // this.syncService,
+      // this.itemManager,
     );
 
     this.services.push(this.integrityService);

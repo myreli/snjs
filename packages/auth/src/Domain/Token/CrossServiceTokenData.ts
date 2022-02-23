@@ -1,6 +1,4 @@
-import { Uuid } from '@standardnotes/common'
-
-import { Role } from '../Role/Role'
+import { Role, Uuid } from '@standardnotes/common'
 
 export type CrossServiceTokenData = {
   user: {

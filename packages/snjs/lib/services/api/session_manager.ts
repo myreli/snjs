@@ -11,14 +11,13 @@ import { JwtSession, RemoteSession, TokenSession } from './session';
 import {
   GetSubscriptionResponse,
   ChangeCredentialsResponse,
-  HttpResponse,
   KeyParamsResponse,
   RegistrationResponse,
   SessionListResponse,
   SignInResponse,
-  StatusCode,
   User,
 } from './responses';
+import { HttpResponse, StatusCode } from '@standardnotes/common'
 import { SNProtocolService } from './../protocol_service';
 import { SNApiService } from './api_service';
 import { SNStorageService } from './../storage_service';

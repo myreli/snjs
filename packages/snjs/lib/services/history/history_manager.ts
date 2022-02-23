@@ -1,4 +1,4 @@
-import { CopyPayload, RawPayload } from './../../protocol/payloads/generator';
+import { CopyPayload } from './../../protocol/payloads/generator';
 import { AbstractService, DeviceInterface } from '@standardnotes/services';
 import { HistoryEntry } from '@Services/history/entries/history_entry';
 import { CreateHistoryEntryForPayload } from '@Services/history/entries/generator';
@@ -17,7 +17,7 @@ import {
   CreateSourcedPayloadFromObject,
 } from '@Payloads/generator';
 import { SNItem } from '@Models/core/item';
-import { ContentType } from '@standardnotes/common';
+import { ContentType, RawPayload } from '@standardnotes/common';
 import { PayloadSource } from '@Payloads/sources';
 import { StorageKey } from '@Lib/storage_keys';
 import { isNullOrUndefined, removeFromArray } from '@standardnotes/utils';

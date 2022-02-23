@@ -1,5 +1,5 @@
 import { AppDataField } from '@Models/core/item';
-import { PayloadContent } from '@Payloads/generator';
+import { PayloadContent } from '@standardnotes/common';
 import { DefaultAppDomain } from './content_types';
 /**
  * Returns an array of uuids for the given items or payloads

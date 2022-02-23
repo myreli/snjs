@@ -1,18 +1,14 @@
-import { RawPayload } from './../protocol/payloads/generator';
 import { SNAlertService } from './alert_service';
 import { SNLog } from './../log';
 import { Environment } from '@Lib/platforms';
 import { RawStorageKey, StorageKey, namespacedKey } from '@Lib/storage_keys';
 import { ApplicationStage } from '@standardnotes/common';
-import {
-  CreateMaxPayloadFromAnyObject,
-  PayloadContent,
-} from '@Payloads/generator';
+import { CreateMaxPayloadFromAnyObject } from '@Payloads/generator';
 import { EncryptionDelegate } from './encryption_delegate';
 import { EncryptionIntent } from '@Protocol/intents';
 import { SNRootKey } from '@Protocol/root_key';
 import { PurePayload } from '@Payloads/pure_payload';
-import { ContentType } from '@standardnotes/common';
+import { ContentType, RawPayload, PayloadContent } from '@standardnotes/common';
 import { Copy, isNullOrUndefined } from '@standardnotes/utils';
 import { Uuid } from '@Lib/uuid';
 import { AbstractService, DeviceInterface } from '@standardnotes/services';

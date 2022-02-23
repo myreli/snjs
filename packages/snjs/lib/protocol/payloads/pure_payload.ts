@@ -5,13 +5,14 @@ import {
   ProtocolVersion,
   protocolVersionFromEncryptedString,
 } from '@Protocol/versions';
-import { ContentType } from '@standardnotes/common';
-import { deepFreeze, isNullOrUndefined, isObject, isString } from '@standardnotes/utils';
 import {
+  ContentType,
   ContentReference,
   PayloadContent,
   RawPayload,
-} from '@Payloads/generator';
+  PurePayloadInterface
+} from '@standardnotes/common';
+import { deepFreeze, isNullOrUndefined, isObject, isString } from '@standardnotes/utils';
 import { PayloadFormat } from '@Payloads/formats';
 import { UuidString } from './../../types';
 
@@ -31,7 +32,7 @@ import { UuidString } from './../../types';
  * Payloads also have a content format. Formats can either be
  * EncryptedString or DecryptedBareObject.
  */
-export class PurePayload {
+export class PurePayload implements PurePayloadInterface {
   /** When constructed, the payload takes in an array of fields that the input raw payload
    * contains. These fields allow consumers to determine whether a given payload has an actual
    * undefined value for payload.content, for example, or whether the payload was constructed

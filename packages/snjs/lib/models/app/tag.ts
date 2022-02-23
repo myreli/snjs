@@ -1,12 +1,12 @@
-import {
-  ContenteReferenceType,
-  ContentReference,
-  isTagToParentTagReference,
-  TagToParentTagReference,
-} from '@Lib/protocol/payloads/generator';
+import { isTagToParentTagReference } from '@Lib/protocol/payloads/generator';
 import { ItemMutator, SNItem } from '@Models/core/item';
 import { PurePayload } from '@Protocol/payloads/pure_payload';
-import { ContentType } from '@standardnotes/common';
+import {
+  ContentType,
+  ContenteReferenceType,
+  ContentReference,
+  TagToParentTagReference
+} from '@standardnotes/common';
 import { UuidString } from './../../types';
 import { ItemContent } from './../core/item';
 

@@ -4,10 +4,8 @@ import { PurePayload } from '@Payloads/pure_payload';
 import { deepFreeze, isNullOrUndefined } from '@standardnotes/utils';
 import { ApiEndpointParam } from '@Services/api/keys';
 import { PayloadSource } from '@Payloads/sources';
-import {
-  CreateSourcedPayloadFromObject,
-  RawPayload,
-} from '@Payloads/generator';
+import { CreateSourcedPayloadFromObject } from '@Payloads/generator';
+import { RawPayload } from '@standardnotes/common';
 
 export class SyncResponse {
   public readonly rawResponse: RawSyncResponse;
